@@ -49,6 +49,10 @@ class TelegramBotDescriptorImpl implements TelegramBotDescriptor {
             throw new IllegalArgumentException("The 'maxConnections' argument must range between 1 and 100");
         }
 
+        if (!token.contains(":")) {
+            throw new IllegalArgumentException("Invalid token provided.");
+        }
+
         this.token = token;
         this.botType = botType;
         this.webhookUrl = webhookUrl;

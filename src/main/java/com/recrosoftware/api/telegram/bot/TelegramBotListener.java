@@ -35,6 +35,11 @@ class TelegramBotListener {
         Set<String> loadedBots = new HashSet<>();
 
         for (TelegramBotDescriptor descriptor : botDescriptors) {
+            if (descriptor == null) {
+                log.warn("TelegramBot API - Found a 'null' descriptor.");
+                continue;
+            }
+
             if (loadedBots.contains(descriptor.getBotId())) {
                 throw new IllegalStateException(String.format("Bot %s already loaded", descriptor.getBotId()));
             }
@@ -53,7 +58,7 @@ class TelegramBotListener {
                     lpUpdater.startFor(descriptor);
                     break;
                 case WEBHOOK_BOT:
-                    String webhookUrl = String.format("%s/rs-telegram-api/bot/webhook/%s", descriptor.getWebhookUrl(), descriptor.getTokenHash());
+                    String webhookUrl = String.format("%s%s/%s", descriptor.getWebhookUrl(), WebHookUpdaterController.WEBHOOK_PATH, descriptor.getTokenHash());
                     MethodSetWebhook setWebhook = new MethodSetWebhook()
                             .setUrl(webhookUrl)
                             .setCertificate(descriptor.getCertificate())
@@ -70,7 +75,7 @@ class TelegramBotListener {
     }
 
     @PreDestroy
-    void test() {
+    public void test() {
         log.info("TelegramBot API - Closing listeners");
         lpUpdater.stopAll();
     }

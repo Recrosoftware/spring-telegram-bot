@@ -22,6 +22,8 @@ import java.util.Objects;
 @Singleton
 @Controller
 class WebHookUpdaterController {
+    static final String WEBHOOK_PATH = "/rs/telegram/bot/webhook/{tokenHash}";
+
     private final static Logger log = LoggerFactory.getLogger(WebHookUpdaterController.class);
 
     private final List<TelegramBotDescriptor> botDescriptors;
@@ -35,7 +37,7 @@ class WebHookUpdaterController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/rs/telegram/bot/webhook/{tokenHash}",
+    @RequestMapping(value = WEBHOOK_PATH,
             method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public void handleUpdate(@PathVariable("tokenHash") final String tokenHash,
@@ -75,7 +77,7 @@ class WebHookUpdaterController {
     private TelegramBotDescriptor getDescriptorByHash(final String tokenHash) {
         if (botDescriptors != null) {
             for (TelegramBotDescriptor descriptor : botDescriptors) {
-                if (Objects.equals(descriptor.getTokenHash(), tokenHash)) {
+                if (descriptor != null && Objects.equals(descriptor.getTokenHash(), tokenHash)) {
                     return descriptor;
                 }
             }
